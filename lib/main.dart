@@ -62,10 +62,6 @@ class _HomePageSceenState extends State<HomePageSceen> {
   String target1Lan = 'EN';
   String target2Lan = 'JP';
 
-  // onTap: () {
-  //           focusNode.requestFocus();
-  //         },
-
   void copyText(String word) {
     Clipboard.setData(ClipboardData(text: word));
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -77,6 +73,31 @@ class _HomePageSceenState extends State<HomePageSceen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FloatingActionButton(
+          child: const Icon(Icons.info_outline),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('How to Use'),
+                  content: Text(
+                      '1. Select the language to translate\n2. Click to copy the searched sentence\n3. Slide the saved text to the right to delete it'),
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.exit_to_app))
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
       body: Container(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -97,7 +118,7 @@ class _HomePageSceenState extends State<HomePageSceen> {
                     }).toList(),
                     onChanged: (String? newVal) {
                       originalLan = newVal!;
-
+                      focusNode.requestFocus();
                       setState(() {});
                     },
                   ),
@@ -143,7 +164,7 @@ class _HomePageSceenState extends State<HomePageSceen> {
                   const SizedBox(height: 70),
 
                 isWord1Wait == true || isWord2Wait == true
-                    ? Padding(
+                    ? const Padding(
                         padding: const EdgeInsets.all(18.0),
                         child: CircularProgressIndicator(),
                       )
