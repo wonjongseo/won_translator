@@ -4,9 +4,9 @@ import 'package:translator_app/core/network_manager.dart';
 String papaoUri = 'https://openapi.naver.com/v1/papago/n2mt';
 
 class NetWork {
-  static const String papagoBaseUrl = 'http://localhost:3000/';
-  //  static const String papagoBaseUrl =
-  //     'https://won-translator.herokuapp.com/';
+  //  static const String papagoBaseUrl = 'http://localhost:3000/';
+  static const String papagoBaseUrl =
+      'https://won-translator.herokuapp.com/translate';
 
   NetworkManager networkManager = NetworkManager();
 
@@ -27,6 +27,7 @@ class NetWork {
       final response = await networkManager.request(
           RequestMethod.get, papagoBaseUrl,
           queryparameters: queryparameters);
+      print('response: ${response}');
 
       if (response.data['message'] != null) {
         if (response.data['message']['result'] != null) {

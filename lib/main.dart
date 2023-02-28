@@ -58,9 +58,9 @@ class _HomePageSceenState extends State<HomePageSceen> {
   String word2 = '';
   bool isWord1Wait = false;
   bool isWord2Wait = false;
-  String language1 = 'KO';
-  String language2 = 'EN';
-  String language3 = 'JP';
+  String originalLan = 'KO';
+  String target1Lan = 'EN';
+  String target2Lan = 'JP';
 
   // onTap: () {
   //           focusNode.requestFocus();
@@ -87,7 +87,7 @@ class _HomePageSceenState extends State<HomePageSceen> {
                 SizedBox(
                   width: double.infinity,
                   child: DropdownButton(
-                    value: language1,
+                    value: originalLan,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     items: languages.map((String item) {
                       return DropdownMenuItem(
@@ -96,7 +96,7 @@ class _HomePageSceenState extends State<HomePageSceen> {
                       );
                     }).toList(),
                     onChanged: (String? newVal) {
-                      language1 = newVal!;
+                      originalLan = newVal!;
 
                       setState(() {});
                     },
@@ -166,15 +166,15 @@ class _HomePageSceenState extends State<HomePageSceen> {
                                         onPressed: () async {
                                           controller.text = word1;
 
-                                          switch (language2) {
+                                          switch (target1Lan) {
                                             case 'KO':
-                                              language1 = 'KO';
+                                              originalLan = 'KO';
                                               break;
                                             case 'EN':
-                                              language1 = 'EN';
+                                              originalLan = 'EN';
                                               break;
                                             case 'JP':
-                                              language1 = 'JP';
+                                              originalLan = 'JP';
                                               break;
                                           }
                                           setState(() {
@@ -200,15 +200,15 @@ class _HomePageSceenState extends State<HomePageSceen> {
                                         onPressed: () async {
                                           controller.text = word2;
 
-                                          switch (language3) {
+                                          switch (target2Lan) {
                                             case 'KO':
-                                              language1 = 'KO';
+                                              originalLan = 'KO';
                                               break;
                                             case 'EN':
-                                              language1 = 'EN';
+                                              originalLan = 'EN';
                                               break;
                                             case 'JP':
-                                              language1 = 'JP';
+                                              originalLan = 'JP';
                                               break;
                                           }
                                           sendMessageToPapago();
@@ -221,89 +221,68 @@ class _HomePageSceenState extends State<HomePageSceen> {
                           ),
                         ),
                       ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(
-                          words.length,
-                          (index) => Slidable(
-                                endActionPane: ActionPane(
-                                  motion: ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        words
-                                            .removeAt(words.length - index - 1);
-                                        setState(() {});
-                                      },
-                                      backgroundColor: Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: 'Delete',
-                                    ),
-                                  ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(words.length, (index) {
+                          List<String> savedWord =
+                              words[words.length - index - 1].getEnglish();
+                          return Slidable(
+                            endActionPane: ActionPane(
+                              motion: ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    words.removeAt(words.length - index - 1);
+                                    setState(() {});
+                                  },
+                                  backgroundColor: Color(0xFFFE4A49),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
                                 ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        alignment: Alignment.centerLeft,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 20.0),
-                                        child: TextButton(
-                                          child: Text(
-                                              words[words.length - index - 1]
-                                                  .originalWord),
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: Text(words[
-                                                          words.length -
-                                                              index -
-                                                              1]
-                                                      .originalWord),
-                                                  content:
-                                                      SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Text(words[
-                                                                words.length -
-                                                                    index -
-                                                                    1]
-                                                            .target1Word),
-                                                        const SizedBox(
-                                                            height: 30),
-                                                        Text(words[
-                                                                words.length -
-                                                                    index -
-                                                                    1]
-                                                            .target2Word),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    margin: const EdgeInsets.only(bottom: 20.0),
+                                    child: TextButton(
+                                      child: Text(savedWord[0]),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(savedWord[0]),
+                                              content: SingleChildScrollView(
+                                                child: Column(
+                                                  children: [
+                                                    Text(savedWord[1]),
+                                                    const SizedBox(height: 30),
+                                                    Text(savedWord[2]),
+                                                  ],
+                                                ),
+                                              ),
                                             );
                                           },
-                                        ),
-                                      ),
+                                        );
+                                      },
                                     ),
-                                    IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(Icons.remove))
-                                  ],
+                                  ),
                                 ),
-                              )),
-                    ),
+                              ],
+                            ),
+                          );
+                        })),
                   ),
                 ),
               ],
@@ -321,13 +300,8 @@ class _HomePageSceenState extends State<HomePageSceen> {
       isWord1Wait = true;
       isWord2Wait = true;
     });
-    Random random = Random();
 
-    // word1 =
-    //     '텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.';
-    // word2 =
-    //     'テキストフィールドコンテナには塗りつぶしとストロークがあります（コンテナ全体の周囲または下端のみ）。 ストロークの色と太さは、テキストフィールドがアクティブなときに表示されるように変更できます。 ${random.nextInt(100).toString()}';
-    switch (language1) {
+    switch (originalLan) {
       // 'KO', 'EN', 'JP'
       case 'KO':
         word1 = await netWork.getWordMean(
@@ -336,31 +310,31 @@ class _HomePageSceenState extends State<HomePageSceen> {
         word2 =
             await netWork.getWordMean(source: 'ja', target: 'en', word: word1);
 
-        language2 = 'JP';
-        language3 = 'EN';
+        target1Lan = 'JP';
+        target2Lan = 'EN';
         break;
 
       case 'EN':
         word1 = await netWork.getWordMean(
             source: 'en', target: 'ko', word: controller.text);
 
-        language2 = 'KO';
+        target1Lan = 'KO';
 
         word2 = await netWork.getWordMean(
             source: 'en', target: 'ja', word: controller.text);
 
-        language3 = 'JP';
+        target2Lan = 'JP';
         break;
       case 'JP':
         word1 = await netWork.getWordMean(
             source: 'ja', target: 'ko', word: controller.text);
 
-        language2 = 'KO';
+        target1Lan = 'KO';
 
         word2 = await netWork.getWordMean(
             source: 'ja', target: 'en', word: controller.text);
 
-        language3 = 'EN';
+        target2Lan = 'EN';
         break;
     }
 
@@ -369,12 +343,11 @@ class _HomePageSceenState extends State<HomePageSceen> {
       isWord2Wait = false;
     });
     words.add(Word(
-        originalWord: controller.text, target1Word: word1, target2Word: word2));
-    // words.add(Word(
-    //     id: words.length + 1,
-    //     originalWord:
-    //         'A text field container has a fill and a stroke (either around the entire container, or just the bottom edge). The color and thickness of a stroke can change to indicate when the text field is active.',
-    //     target1Word: word1,
-    //     target2Word: word2));
+        originalWord: controller.text,
+        target1Word: word1,
+        target2Word: word2,
+        originalLan: originalLan,
+        target1Lan: target1Lan,
+        target2Lan: target2Lan));
   }
 }
