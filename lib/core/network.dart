@@ -9,35 +9,6 @@ class NetWork {
 
   NetworkManager networkManager = NetworkManager();
 
-  Future<String> getMean(
-      {required source, required target, required word}) async {
-    String id = '1FoeFZ9bzyTwWvE4A5pr';
-    String secretKey = '5fL3KQQaTh';
-
-    Map<String, dynamic> queryparameters = {
-      'source': source,
-      'target': target,
-      'text': word
-    };
-
-    String url = '${papaoUri}?source=${source}&target=$target&text=$word';
-    print('url: ${url}');
-
-    try {
-      http.Response res = await http.post(Uri.parse(papaoUri), headers: {
-        'X-Naver-Client-Id': id,
-        'X-Naver-Client-Secret': secretKey,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-      });
-
-      print(res.body);
-    } catch (e) {
-      print(e);
-    }
-
-    return '';
-  }
-
   Future<String> getWordMean(
       {required source, required target, required word}) async {
     // String source = 'en';
@@ -48,7 +19,8 @@ class NetWork {
     Map<String, dynamic> headers = {
       'X-Naver-Client-Id': id,
       'X-Naver-Client-Secret': secretKey,
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Access-Control-Allow-Origin': false
     };
     Map<String, dynamic> queryparameters = {
       'source': source,
