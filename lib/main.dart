@@ -368,13 +368,13 @@ class _HomePageSceenState extends State<HomePageSceen> {
       isWord1Wait = false;
       isWord2Wait = false;
     });
-    // words.add(Word(
-    //     originalWord: controller.text, target1Word: word1, target2Word: word2));
     words.add(Word(
-        id: words.length + 1,
-        originalWord:
-            'A text field container has a fill and a stroke (either around the entire container, or just the bottom edge). The color and thickness of a stroke can change to indicate when the text field is active.',
-        target1Word: word1,
-        target2Word: word2));
+        originalWord: controller.text, target1Word: word1, target2Word: word2));
+    // words.add(Word(
+    //     id: words.length + 1,
+    //     originalWord:
+    //         'A text field container has a fill and a stroke (either around the entire container, or just the bottom edge). The color and thickness of a stroke can change to indicate when the text field is active.',
+    //     target1Word: word1,
+    //     target2Word: word2));
   }
 }
