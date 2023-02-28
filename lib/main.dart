@@ -140,66 +140,101 @@ class _HomePageSceenState extends State<HomePageSceen> {
                 ),
                 // translator
                 const SizedBox(height: 15),
-                word1 != ''
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                isWord1Wait == true || isWord2Wait == true
+                    ? CircularProgressIndicator()
+                    : Column(
                         children: [
-                          InkWell(
-                              onTap: () => copyText(word1), child: Text(word1)),
-                          IconButton(
-                              onPressed: () async {
-                                controller.text = word1;
+                          if (word1 != '')
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                    onTap: () => copyText(word1),
+                                    child: Text(word1)),
+                                IconButton(
+                                    onPressed: () async {
+                                      controller.text = word1;
 
-                                switch (language2) {
-                                  case 'KO':
-                                    language1 = 'KO';
-                                    break;
-                                  case 'EN':
-                                    language1 = 'EN';
-                                    break;
-                                  case 'JP':
-                                    language1 = 'JP';
-                                    break;
-                                }
-                                setState(() {
-                                  sendMessageToPapago();
-                                });
-                              },
-                              icon: const Icon(Icons.send))
+                                      switch (language2) {
+                                        case 'KO':
+                                          language1 = 'KO';
+                                          break;
+                                        case 'EN':
+                                          language1 = 'EN';
+                                          break;
+                                        case 'JP':
+                                          language1 = 'JP';
+                                          break;
+                                      }
+                                      setState(() {
+                                        sendMessageToPapago();
+                                      });
+                                    },
+                                    icon: const Icon(Icons.send))
+                              ],
+                            ),
+                          // word1 != ''
+                          //     ? Row(
+                          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           InkWell(
+                          //               onTap: () => copyText(word1), child: Text(word1)),
+                          //           IconButton(
+                          //               onPressed: () async {
+                          //                 controller.text = word1;
+
+                          //                 switch (language2) {
+                          //                   case 'KO':
+                          //                     language1 = 'KO';
+                          //                     break;
+                          //                   case 'EN':
+                          //                     language1 = 'EN';
+                          //                     break;
+                          //                   case 'JP':
+                          //                     language1 = 'JP';
+                          //                     break;
+                          //                 }
+                          //                 setState(() {
+                          //                   sendMessageToPapago();
+                          //                 });
+                          //               },
+                          //               icon: const Icon(Icons.send))
+                          //         ],
+                          //       )
+                          //     : isWord1Wait == true
+                          //         ? CircularProgressIndicator()
+                          //         : SizedBox(),
+                          const SizedBox(height: 15),
+                          if (word2 != '')
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  onTap: () => copyText(word2),
+                                  child: Text(word2),
+                                ),
+                                IconButton(
+                                    onPressed: () async {
+                                      controller.text = word2;
+
+                                      switch (language3) {
+                                        case 'KO':
+                                          language1 = 'KO';
+                                          break;
+                                        case 'EN':
+                                          language1 = 'EN';
+                                          break;
+                                        case 'JP':
+                                          language1 = 'JP';
+                                          break;
+                                      }
+                                      sendMessageToPapago();
+                                    },
+                                    icon: const Icon(Icons.send))
+                              ],
+                            ),
                         ],
-                      )
-                    : word1 == 'wait!'
-                        ? CircularProgressIndicator()
-                        : SizedBox(),
-                const SizedBox(height: 15),
-                if (word2 != '')
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () => copyText(word2),
-                        child: Text(word2),
                       ),
-                      IconButton(
-                          onPressed: () async {
-                            controller.text = word2;
-
-                            switch (language3) {
-                              case 'KO':
-                                language1 = 'KO';
-                                break;
-                              case 'EN':
-                                language1 = 'EN';
-                                break;
-                              case 'JP':
-                                language1 = 'JP';
-                                break;
-                            }
-                            sendMessageToPapago();
-                          },
-                          icon: const Icon(Icons.send))
-                    ],
-                  ),
               ],
             ),
           ),
@@ -211,8 +246,10 @@ class _HomePageSceenState extends State<HomePageSceen> {
   void sendMessageToPapago({value}) async {
     if (controller.text.isEmpty) return;
 
-    isWord1Wait = true;
-    isWord2Wait = true;
+    setState(() {
+      isWord1Wait = true;
+      isWord2Wait = true;
+    });
 
     switch (language1) {
       // 'KO', 'EN', 'JP'
@@ -251,9 +288,9 @@ class _HomePageSceenState extends State<HomePageSceen> {
         break;
     }
 
-    isWord1Wait = false;
-    isWord2Wait = false;
-
-    setState(() {});
+    setState(() {
+      isWord1Wait = false;
+      isWord2Wait = false;
+    });
   }
 }
