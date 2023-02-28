@@ -121,11 +121,6 @@ class _HomePageSceenState extends State<HomePageSceen> {
                       icon: const Icon(Icons.send),
                       onPressed: () {
                         sendMessageToPapago();
-
-                        words.add(Word(
-                            originalWord: controller.text,
-                            target1Word: word1,
-                            target2Word: word2));
                       },
                       //
                     ),
@@ -139,18 +134,28 @@ class _HomePageSceenState extends State<HomePageSceen> {
                   ],
                 ),
                 // translator
-                const SizedBox(height: 15),
+                if (word1 == '' &&
+                    word2 == '' &&
+                    !(isWord1Wait == true || isWord2Wait == true))
+                  const SizedBox(height: 70),
+
                 isWord1Wait == true || isWord2Wait == true
-                    ? CircularProgressIndicator()
+                    ? Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: CircularProgressIndicator(),
+                      )
                     : Column(
                         children: [
+                          const SizedBox(height: 15),
                           if (word1 != '')
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                InkWell(
-                                    onTap: () => copyText(word1),
-                                    child: Text(word1)),
+                                Expanded(
+                                  child: InkWell(
+                                      onTap: () => copyText(word1),
+                                      child: Text(word1)),
+                                ),
                                 IconButton(
                                     onPressed: () async {
                                       controller.text = word1;
@@ -173,45 +178,16 @@ class _HomePageSceenState extends State<HomePageSceen> {
                                     icon: const Icon(Icons.send))
                               ],
                             ),
-                          // word1 != ''
-                          //     ? Row(
-                          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           InkWell(
-                          //               onTap: () => copyText(word1), child: Text(word1)),
-                          //           IconButton(
-                          //               onPressed: () async {
-                          //                 controller.text = word1;
-
-                          //                 switch (language2) {
-                          //                   case 'KO':
-                          //                     language1 = 'KO';
-                          //                     break;
-                          //                   case 'EN':
-                          //                     language1 = 'EN';
-                          //                     break;
-                          //                   case 'JP':
-                          //                     language1 = 'JP';
-                          //                     break;
-                          //                 }
-                          //                 setState(() {
-                          //                   sendMessageToPapago();
-                          //                 });
-                          //               },
-                          //               icon: const Icon(Icons.send))
-                          //         ],
-                          //       )
-                          //     : isWord1Wait == true
-                          //         ? CircularProgressIndicator()
-                          //         : SizedBox(),
                           const SizedBox(height: 15),
                           if (word2 != '')
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                InkWell(
-                                  onTap: () => copyText(word2),
-                                  child: Text(word2),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () => copyText(word2),
+                                    child: Text(word2),
+                                  ),
                                 ),
                                 IconButton(
                                     onPressed: () async {
@@ -233,8 +209,36 @@ class _HomePageSceenState extends State<HomePageSceen> {
                                     icon: const Icon(Icons.send))
                               ],
                             ),
+                          const SizedBox(height: 15),
+                          Divider()
                         ],
                       ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(
+                          words.length,
+                          (index) => Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      margin:
+                                          const EdgeInsets.only(bottom: 20.0),
+                                      child: TextButton(
+                                        child: Text(words[index].originalWord),
+                                        onPressed: () {},
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(Icons.remove))
+                                ],
+                              )),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -292,5 +296,7 @@ class _HomePageSceenState extends State<HomePageSceen> {
       isWord1Wait = false;
       isWord2Wait = false;
     });
+    words.add(Word(
+        originalWord: controller.text, target1Word: word1, target2Word: word2));
   }
 }

@@ -6,7 +6,7 @@ String papaoUri = 'https://openapi.naver.com/v1/papago/n2mt';
 class NetWork {
   // static const String papagoBaseUrl =
   //     'https://openapi.naver.com/v1/papago/n2mt';
-//  static const String papagoBaseUrl = 'http://localhost:3000/translate';
+  //  static const String papagoBaseUrl = 'http://localhost:3000/translate';
   static const String papagoBaseUrl =
       'https://won-translator.herokuapp.com/translate';
 
