@@ -4,8 +4,11 @@ import 'package:translator_app/core/network_manager.dart';
 String papaoUri = 'https://openapi.naver.com/v1/papago/n2mt';
 
 class NetWork {
+  // static const String papagoBaseUrl =
+  //     'https://openapi.naver.com/v1/papago/n2mt';
+//  static const String papagoBaseUrl = 'http://localhost:3000/translate';
   static const String papagoBaseUrl =
-      'https://openapi.naver.com/v1/papago/n2mt';
+      'https://won-translator.herokuapp.com/translate';
 
   NetworkManager networkManager = NetworkManager();
 
@@ -13,19 +16,14 @@ class NetWork {
       {required source, required target, required word}) async {
     // String source = 'en';
     // String target = 'ko';
-    String id = '1FoeFZ9bzyTwWvE4A5pr';
-    String secretKey = '5fL3KQQaTh';
+    // String id = '1FoeFZ9bzyTwWvE4A5pr';
+    // String secretKey = '5fL3KQQaTh';
 
     Map<String, dynamic> headers = {
-      'X-Naver-Client-Id': id,
-      'X-Naver-Client-Secret': secretKey,
+      // 'X-Naver-Client-Id': id,
+      // 'X-Naver-Client-Secret': secretKey,
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-      "Access-Control-Allow-Credentials":
-          true, // Required for cookies, authorization headers with HTTPS
-      "Access-Control-Allow-Headers":
-          "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-      "Access-Control-Allow-Methods": "POST, OPTIONS"
+      'Access-Control-Allow-Origin': '*'
     };
     Map<String, dynamic> queryparameters = {
       'source': source,
@@ -35,9 +33,13 @@ class NetWork {
 
     String result = '';
     try {
+      // final response = await networkManager.request(
+      //     RequestMethod.post, papagoBaseUrl,
+      //     headers: headers, queryparameters: queryparameters);
       final response = await networkManager.request(
-          RequestMethod.post, papagoBaseUrl,
-          headers: headers, queryparameters: queryparameters);
+          RequestMethod.get, papagoBaseUrl,
+          queryparameters: queryparameters);
+
       if (response.data['message'] != null) {
         if (response.data['message']['result'] != null) {
           if (response.data['message']['result']['translatedText'] != null) {
@@ -45,7 +47,8 @@ class NetWork {
           }
         }
       }
-      print(result);
+      // print(response);
+      // return response as String;
       return result;
     } catch (e) {
       print(e.toString());
