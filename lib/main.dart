@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:translator_app/core/network.dart';
@@ -144,101 +147,165 @@ class _HomePageSceenState extends State<HomePageSceen> {
                         padding: const EdgeInsets.all(18.0),
                         child: CircularProgressIndicator(),
                       )
-                    : Column(
-                        children: [
-                          const SizedBox(height: 15),
-                          if (word1 != '')
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                      onTap: () => copyText(word1),
-                                      child: Text(word1)),
-                                ),
-                                IconButton(
-                                    onPressed: () async {
-                                      controller.text = word1;
+                    : Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 15),
+                              if (word1 != '')
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                          onTap: () => copyText(word1),
+                                          child: Text(word1)),
+                                    ),
+                                    IconButton(
+                                        onPressed: () async {
+                                          controller.text = word1;
 
-                                      switch (language2) {
-                                        case 'KO':
-                                          language1 = 'KO';
-                                          break;
-                                        case 'EN':
-                                          language1 = 'EN';
-                                          break;
-                                        case 'JP':
-                                          language1 = 'JP';
-                                          break;
-                                      }
-                                      setState(() {
-                                        sendMessageToPapago();
-                                      });
-                                    },
-                                    icon: const Icon(Icons.send))
-                              ],
-                            ),
-                          const SizedBox(height: 15),
-                          if (word2 != '')
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () => copyText(word2),
-                                    child: Text(word2),
-                                  ),
+                                          switch (language2) {
+                                            case 'KO':
+                                              language1 = 'KO';
+                                              break;
+                                            case 'EN':
+                                              language1 = 'EN';
+                                              break;
+                                            case 'JP':
+                                              language1 = 'JP';
+                                              break;
+                                          }
+                                          setState(() {
+                                            sendMessageToPapago();
+                                          });
+                                        },
+                                        icon: const Icon(Icons.send))
+                                  ],
                                 ),
-                                IconButton(
-                                    onPressed: () async {
-                                      controller.text = word2;
+                              const SizedBox(height: 15),
+                              if (word2 != '')
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () => copyText(word2),
+                                        child: Text(word2),
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () async {
+                                          controller.text = word2;
 
-                                      switch (language3) {
-                                        case 'KO':
-                                          language1 = 'KO';
-                                          break;
-                                        case 'EN':
-                                          language1 = 'EN';
-                                          break;
-                                        case 'JP':
-                                          language1 = 'JP';
-                                          break;
-                                      }
-                                      sendMessageToPapago();
-                                    },
-                                    icon: const Icon(Icons.send))
-                              ],
-                            ),
-                          const SizedBox(height: 15),
-                          Divider()
-                        ],
+                                          switch (language3) {
+                                            case 'KO':
+                                              language1 = 'KO';
+                                              break;
+                                            case 'EN':
+                                              language1 = 'EN';
+                                              break;
+                                            case 'JP':
+                                              language1 = 'JP';
+                                              break;
+                                          }
+                                          sendMessageToPapago();
+                                        },
+                                        icon: const Icon(Icons.send))
+                                  ],
+                                ),
+                              const SizedBox(height: 15),
+                            ],
+                          ),
+                        ),
                       ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Divider(),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: List.generate(
                           words.length,
-                          (index) => Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      margin:
-                                          const EdgeInsets.only(bottom: 20.0),
-                                      child: TextButton(
-                                        child: Text(words[index].originalWord),
-                                        onPressed: () {},
+                          (index) => Slidable(
+                                endActionPane: ActionPane(
+                                  motion: ScrollMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (context) {
+                                        words
+                                            .removeAt(words.length - index - 1);
+                                        setState(() {});
+                                      },
+                                      backgroundColor: Color(0xFFFE4A49),
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        margin:
+                                            const EdgeInsets.only(bottom: 20.0),
+                                        child: TextButton(
+                                          child: Text(
+                                              words[words.length - index - 1]
+                                                  .originalWord),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text(words[
+                                                          words.length -
+                                                              index -
+                                                              1]
+                                                      .originalWord),
+                                                  content:
+                                                      SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Text(words[
+                                                                words.length -
+                                                                    index -
+                                                                    1]
+                                                            .target1Word),
+                                                        const SizedBox(
+                                                            height: 30),
+                                                        Text(words[
+                                                                words.length -
+                                                                    index -
+                                                                    1]
+                                                            .target2Word),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.remove))
-                                ],
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(Icons.remove))
+                                  ],
+                                ),
                               )),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -254,7 +321,12 @@ class _HomePageSceenState extends State<HomePageSceen> {
       isWord1Wait = true;
       isWord2Wait = true;
     });
+    Random random = Random();
 
+    // word1 =
+    //     '텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.텍스트 필드 컨테이너에는 채우기 및 스트로크가 있습니다(전체 컨테이너 주변 또는 하단 가장자리에만 해당).스트로크의 색상과 두께를 변경하여 텍스트 필드가 활성화된 시점을 나타낼 수 있습니다.';
+    // word2 =
+    //     'テキストフィールドコンテナには塗りつぶしとストロークがあります（コンテナ全体の周囲または下端のみ）。 ストロークの色と太さは、テキストフィールドがアクティブなときに表示されるように変更できます。 ${random.nextInt(100).toString()}';
     switch (language1) {
       // 'KO', 'EN', 'JP'
       case 'KO':
@@ -296,7 +368,13 @@ class _HomePageSceenState extends State<HomePageSceen> {
       isWord1Wait = false;
       isWord2Wait = false;
     });
+    // words.add(Word(
+    //     originalWord: controller.text, target1Word: word1, target2Word: word2));
     words.add(Word(
-        originalWord: controller.text, target1Word: word1, target2Word: word2));
+        id: words.length + 1,
+        originalWord:
+            'A text field container has a fill and a stroke (either around the entire container, or just the bottom edge). The color and thickness of a stroke can change to indicate when the text field is active.',
+        target1Word: word1,
+        target2Word: word2));
   }
 }
