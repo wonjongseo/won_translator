@@ -26,7 +26,6 @@ class _MyVocaPageState extends State<MyVocaPage> {
 
   void initShared() async {
     pref = await SharedPreferences.getInstance();
-    loadData();
   }
 
   void loadData() {
@@ -90,6 +89,7 @@ class _MyVocaPageState extends State<MyVocaPage> {
                   SizedBox(
                     width: double.infinity,
                     child: TextFormField(
+                      enabled: isReFresh,
                       autofocus: true,
                       focusNode: focusNode,
                       onFieldSubmitted: (value) {
@@ -111,7 +111,7 @@ class _MyVocaPageState extends State<MyVocaPage> {
                   SizedBox(
                     width: double.infinity,
                     child: TextFormField(
-                      autofocus: true,
+                      enabled: isReFresh,
                       onFieldSubmitted: (value) {
                         saveWord();
                         // sendMessageToPapago(value: value);
