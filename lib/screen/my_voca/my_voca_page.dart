@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:translator_app/data/myWord.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyVocaPage extends StatefulWidget {
   const MyVocaPage({super.key});
@@ -15,32 +16,64 @@ class MyVocaPage extends StatefulWidget {
 }
 
 class _MyVocaPageState extends State<MyVocaPage> {
-  List<MyWord> myWords = [
-    MyWord(word: 'word1', mean: 'mean1'),
-    MyWord(word: 'word2', mean: 'mean2'),
-    MyWord(word: 'word3', mean: 'mean3'),
-    MyWord(word: 'word4', mean: 'mean4'),
-  ];
+  List<MyWord> myWords = [];
+  bool isReFresh = false;
+  late SharedPreferences pref;
+  late TextEditingController controller1;
+  late TextEditingController controller2;
+
+  late FocusNode focusNode;
+
+  void initShared() async {
+    pref = await SharedPreferences.getInstance();
+    loadData();
+  }
+
+  void loadData() {
+    Set<String> keys = pref.getKeys();
+
+    for (String key in keys) {
+      print(key);
+      MyWord temp = MyWord(word: key, mean: pref.get(key) as String);
+      myWords.add(temp);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initShared();
+    controller1 = TextEditingController();
+    controller2 = TextEditingController();
+    focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    controller1.dispose();
+    controller2.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  void saveWord() async {
+    String word = controller1.text;
+    String mean = controller2.text;
+    if (word.isEmpty || mean.isEmpty) return;
+
+    MyWord newWord = MyWord(word: word, mean: mean);
+    myWords.add(newWord);
+
+    controller1.clear();
+    controller2.clear();
+    focusNode.requestFocus();
+    await pref.setString(newWord.word, newWord.mean);
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller1 = TextEditingController();
-    TextEditingController controller2 = TextEditingController();
-    FocusNode focusNode = FocusNode();
-
-    void saveWord() {
-      String word = controller1.text;
-      String mean = controller2.text;
-      if (word.isEmpty || mean.isEmpty) return;
-
-      MyWord newWord = MyWord(word: word, mean: mean);
-      myWords.add(newWord);
-
-      controller1.clear();
-      controller2.clear();
-      focusNode.requestFocus();
-      setState(() {});
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 60),
       child: Column(
@@ -99,19 +132,39 @@ class _MyVocaPageState extends State<MyVocaPage> {
                   SizedBox(
                       width: double.infinity,
                       height: 70,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF30E3DF)),
-                        child: Text(
-                          'SAVE',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold, fontSize: 30),
-                        ),
-                        onPressed: saveWord,
-                      )),
+                      child: !isReFresh
+                          ? ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF30E3DF)),
+                              child: Text(
+                                'REFRESH',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30),
+                              ),
+                              onPressed: () {
+                                loadData();
+                                isReFresh = true;
+                                setState(() {});
+                              },
+                            )
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF30E3DF)),
+                              child: Text(
+                                'SAVE',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30),
+                              ),
+                              onPressed: saveWord,
+                            )),
                 ],
               ),
             ),
@@ -133,8 +186,12 @@ class _MyVocaPageState extends State<MyVocaPage> {
                               children: [
                                 SlidableAction(
                                   onPressed: (context) {
+                                    pref.remove(
+                                        myWords[myWords.length - index - 1]
+                                            .word);
                                     myWords
                                         .removeAt(myWords.length - index - 1);
+
                                     setState(() {});
                                   },
                                   backgroundColor: Color(0xFFFE4A49),
