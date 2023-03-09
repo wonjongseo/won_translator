@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:translator_app/core/network.dart';
-import 'package:translator_app/data/word.dart';
+import 'package:translator_app/data/translator_word.dart';
 import 'package:translator_app/main.dart';
 
 class TranslatorPage extends StatefulWidget {
@@ -15,7 +15,7 @@ class TranslatorPage extends StatefulWidget {
 }
 
 class TtranslatorStatePage extends State<TranslatorPage> {
-  List<Word> words = [];
+  List<TranslatorWord> words = [];
   late TextEditingController controller;
   late FocusNode focusNode;
   @override
@@ -342,7 +342,7 @@ class TtranslatorStatePage extends State<TranslatorPage> {
       isWord1Wait = false;
       isWord2Wait = false;
     });
-    words.add(Word(
+    words.add(TranslatorWord(
         originalWord: controller.text,
         target1Word: word1,
         target2Word: word2,
