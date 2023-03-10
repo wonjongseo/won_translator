@@ -18,6 +18,7 @@ class MyVocaPage extends StatefulWidget {
 class _MyVocaPageState extends State<MyVocaPage> {
   List<Word> myWords = [];
   bool isReFresh = false;
+  bool isWordFlip = false;
   late SharedPreferences pref;
   late TextEditingController controller1;
   late TextEditingController controller2;
@@ -34,13 +35,12 @@ class _MyVocaPageState extends State<MyVocaPage> {
     Set<String> keys = pref.getKeys();
 
     for (String key in keys) {
-      print(key);
       Word temp = Word(word: key, mean: pref.get(key) as String);
       myWords.add(temp);
     }
-    print('isReFresh: ${isReFresh}');
+
     isReFresh = true;
-    print('isReFresh: ${isReFresh}');
+
     setState(() {});
   }
 
@@ -86,152 +86,161 @@ class _MyVocaPageState extends State<MyVocaPage> {
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 60),
       child: !isReFresh
           ? CircularProgressIndicator()
-          : Column(
+          : Stack(
               children: [
-                Container(
-                  padding: const EdgeInsets.only(
-                      top: 16, bottom: 32, right: 60, left: 60),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Form(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextFormField(
-                            enabled: isReFresh,
-                            autofocus: true,
-                            focusNode: focusNode,
-                            onFieldSubmitted: (value) {
-                              // sendMessageToPapago(value: value);
-                            },
-                            controller: controller1,
-                            decoration: InputDecoration(
-                                label: const Text('WORD'),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.black.withOpacity(0.2)),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black),
-                                ),
-                                labelStyle:
-                                    const TextStyle(color: Colors.black)),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextFormField(
-                            enabled: isReFresh,
-                            onFieldSubmitted: (value) {
-                              saveWord();
-                              // sendMessageToPapago(value: value);
-                            },
-                            controller: controller2,
-                            decoration: InputDecoration(
-                                label: const Text('MEAN'),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.black.withOpacity(0.2)),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black),
-                                ),
-                                labelStyle:
-                                    const TextStyle(color: Colors.black)),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                            width: double.infinity,
-                            height: 70,
-                            child: !isReFresh
-                                ? ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white),
-                                    child: Text(
-                                      'REFRESH',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 30),
+                Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(
+                          top: 16, bottom: 32, right: 60, left: 60),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Form(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: TextFormField(
+                                enabled: isReFresh,
+                                autofocus: true,
+                                focusNode: focusNode,
+                                onFieldSubmitted: (value) {
+                                  // sendMessageToPapago(value: value);
+                                },
+                                controller: controller1,
+                                decoration: InputDecoration(
+                                    label: const Text('WORD'),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black.withOpacity(0.2)),
                                     ),
-                                    onPressed: () {
-                                      loadData();
-                                      isReFresh = true;
-                                      setState(() {});
-                                    },
-                                  )
-                                : ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white),
-                                    child: Icon(
-                                      Icons.ads_click,
-                                      color: Colors.black,
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
                                     ),
-                                    // child: Text(
-                                    //   'SAVE',
-                                    //   style: Theme.of(context)
-                                    //       .textTheme
-                                    //       .bodyLarge!
-                                    //       .copyWith(
-                                    //           fontWeight: FontWeight.bold,
-                                    //           fontSize: 30),
-                                    // ),
-                                    onPressed: saveWord,
-                                  )),
-                      ],
-                    ),
-                  ),
-                ),
-                const Divider(),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(
-                            myWords.length,
-                            (index) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: Slidable(
-                                    endActionPane: ActionPane(
-                                      motion: ScrollMotion(),
-                                      children: [
-                                        SlidableAction(
-                                          onPressed: (context) {
-                                            pref.remove(myWords[
-                                                    myWords.length - index - 1]
-                                                .word);
-                                            myWords.removeAt(
-                                                myWords.length - index - 1);
-
-                                            setState(() {});
-                                          },
-                                          backgroundColor: Color(0xFFFE4A49),
-                                          foregroundColor: Colors.white,
-                                          icon: Icons.delete,
-                                          label: 'Delete',
+                                    labelStyle:
+                                        const TextStyle(color: Colors.black)),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: TextFormField(
+                                enabled: isReFresh,
+                                onFieldSubmitted: (value) {
+                                  saveWord();
+                                  // sendMessageToPapago(value: value);
+                                },
+                                controller: controller2,
+                                decoration: InputDecoration(
+                                    label: const Text('MEAN'),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black.withOpacity(0.2)),
+                                    ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
+                                    ),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.black)),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                                width: double.infinity,
+                                height: 70,
+                                child: !isReFresh
+                                    ? ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white),
+                                        child: Text(
+                                          'REFRESH',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 30),
                                         ),
-                                      ],
-                                    ),
-                                    child: MyWordCard(
-                                        myWord: myWords[
-                                            myWords.length - 1 - index]),
-                                  ),
-                                )),
+                                        onPressed: () {
+                                          loadData();
+                                          isReFresh = true;
+                                          setState(() {});
+                                        },
+                                      )
+                                    : ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white),
+                                        child: Icon(
+                                          Icons.ads_click,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: saveWord,
+                                      )),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: List.generate(
+                                myWords.length,
+                                (index) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Slidable(
+                                        endActionPane: ActionPane(
+                                          motion: ScrollMotion(),
+                                          children: [
+                                            SlidableAction(
+                                              onPressed: (context) {
+                                                pref.remove(myWords[
+                                                        myWords.length -
+                                                            index -
+                                                            1]
+                                                    .word);
+                                                myWords.removeAt(
+                                                    myWords.length - index - 1);
+
+                                                setState(() {});
+                                              },
+                                              backgroundColor:
+                                                  Color(0xFFFE4A49),
+                                              foregroundColor: Colors.white,
+                                              icon: Icons.delete,
+                                              label: 'Delete',
+                                            ),
+                                          ],
+                                        ),
+                                        child: MyWordCard(
+                                            isWordFlip: isWordFlip,
+                                            myWord: myWords[
+                                                myWords.length - 1 - index]),
+                                      ),
+                                    )),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                Positioned(
+                    child: IconButton(
+                  icon: Icon(Icons.flip),
+                  onPressed: () {
+                    isWordFlip = !isWordFlip;
+                    setState(() {});
+                  },
+                )),
               ],
             ),
     );
@@ -239,9 +248,10 @@ class _MyVocaPageState extends State<MyVocaPage> {
 }
 
 class MyWordCard extends StatelessWidget {
-  const MyWordCard({super.key, required this.myWord});
+  const MyWordCard({super.key, required this.myWord, required this.isWordFlip});
 
   final Word myWord;
+  final bool isWordFlip;
 
   @override
   Widget build(BuildContext context) {
@@ -269,7 +279,7 @@ class MyWordCard extends StatelessWidget {
                 offset: Offset(0, 1),
               )
             ]),
-        child: Center(child: Text(myWord.word)),
+        child: Center(child: Text(isWordFlip ? myWord.mean : myWord.word)),
       ),
     );
   }
