@@ -193,40 +193,55 @@ class _MyVocaPageState extends State<MyVocaPage> {
                         child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(
-                                myWords.length,
-                                (index) => Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                      child: Slidable(
-                                        endActionPane: ActionPane(
-                                          motion: ScrollMotion(),
-                                          children: [
-                                            SlidableAction(
-                                              onPressed: (context) {
-                                                pref.remove(myWords[
-                                                        myWords.length -
-                                                            index -
-                                                            1]
-                                                    .word);
-                                                myWords.removeAt(
-                                                    myWords.length - index - 1);
-
-                                                setState(() {});
-                                              },
-                                              backgroundColor:
-                                                  Color(0xFFFE4A49),
-                                              foregroundColor: Colors.white,
-                                              icon: Icons.delete,
-                                              label: 'Delete',
-                                            ),
-                                          ],
-                                        ),
-                                        child: MyWordCard(
-                                            isWordFlip: isWordFlip,
-                                            myWord: myWords[
-                                                myWords.length - 1 - index]),
+                            children: List.generate(myWords.length, (index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Slidable(
+                                  startActionPane: ActionPane(
+                                    motion: ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) {
+                                          myWords[myWords.length - index - 1]
+                                              .isKnown = !myWords[
+                                                  myWords.length - index - 1]
+                                              .isKnown;
+                                          setState(() {});
+                                        },
+                                        backgroundColor: Colors.grey,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.check,
+                                        label: 'Unkown',
                                       ),
-                                    )),
+                                    ],
+                                  ),
+                                  endActionPane: ActionPane(
+                                    motion: ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) {
+                                          pref.remove(myWords[
+                                                  myWords.length - index - 1]
+                                              .word);
+                                          myWords.removeAt(
+                                              myWords.length - index - 1);
+
+                                          setState(() {});
+                                        },
+                                        backgroundColor: Color(0xFFFE4A49),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete,
+                                        label: 'Delete',
+                                      ),
+                                    ],
+                                  ),
+                                  child: MyWordCard(
+                                      isWordFlip: isWordFlip,
+                                      myWord:
+                                          myWords[myWords.length - 1 - index]),
+                                ),
+                              );
+                            }),
                           ),
                         ),
                       ),
@@ -248,7 +263,11 @@ class _MyVocaPageState extends State<MyVocaPage> {
 }
 
 class MyWordCard extends StatelessWidget {
-  const MyWordCard({super.key, required this.myWord, required this.isWordFlip});
+  const MyWordCard({
+    super.key,
+    required this.myWord,
+    required this.isWordFlip,
+  });
 
   final Word myWord;
   final bool isWordFlip;
@@ -275,7 +294,9 @@ class MyWordCard extends StatelessWidget {
             border: Border.all(width: 1, color: Colors.grey),
             boxShadow: [
               BoxShadow(
-                color: Colors.white,
+                color: myWord.isKnown
+                    ? Colors.grey.withOpacity(0.7)
+                    : Colors.white,
                 offset: Offset(0, 1),
               )
             ]),
