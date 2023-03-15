@@ -5,8 +5,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:translator_app/core/local_datasource.dart';
 import 'package:translator_app/data/word.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyVocaPage extends StatefulWidget {
   const MyVocaPage({super.key});
@@ -17,37 +17,28 @@ class MyVocaPage extends StatefulWidget {
 
 class _MyVocaPageState extends State<MyVocaPage> {
   List<Word> myWords = [];
+  List<bool> isKnwonWords = [];
   bool isReFresh = false;
   bool isWordFlip = false;
-  late SharedPreferences pref;
+  LocalDataSource localDataSource = LocalDataSource();
   late TextEditingController controller1;
   late TextEditingController controller2;
   late TextEditingController controller3;
 
   late FocusNode focusNode;
 
-  void initShared() async {
-    pref = await SharedPreferences.getInstance();
-    loadData();
-  }
-
-  void loadData() {
-    Set<String> keys = pref.getKeys();
-
-    for (String key in keys) {
-      Word temp = Word(word: key, mean: pref.get(key) as String);
-      myWords.add(temp);
-    }
+  void loadData() async {
+    myWords = await localDataSource.getAllVoca();
+    print('myWords: ${myWords}');
 
     isReFresh = true;
-
     setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    initShared();
+    loadData();
 
     controller1 = TextEditingController();
     controller2 = TextEditingController();
@@ -64,6 +55,17 @@ class _MyVocaPageState extends State<MyVocaPage> {
     super.dispose();
   }
 
+  void deleteWord(int index) {
+    localDataSource.deleteVoca(myWords[myWords.length - index - 1]);
+    myWords.removeAt(myWords.length - index - 1);
+  }
+
+  void updateWord(int index) {
+    localDataSource.updateKnownVoca(myWords[myWords.length - index - 1]);
+    myWords[myWords.length - index - 1].isKnown =
+        !myWords[myWords.length - index - 1].isKnown;
+  }
+
   void saveWord() async {
     String word = controller1.text;
     String mean = controller2.text;
@@ -72,10 +74,11 @@ class _MyVocaPageState extends State<MyVocaPage> {
     Word newWord = Word(word: word, mean: mean);
     myWords.add(newWord);
 
+    localDataSource.saveVoca(newWord);
+
     controller1.clear();
     controller2.clear();
     focusNode.requestFocus();
-    await pref.setString(newWord.word, newWord.mean);
 
     setState(() {});
   }
@@ -202,6 +205,8 @@ class _MyVocaPageState extends State<MyVocaPage> {
                                     children: [
                                       SlidableAction(
                                         onPressed: (context) {
+                                          updateWord(
+                                              myWords.length - index - 1);
                                           myWords[myWords.length - index - 1]
                                               .isKnown = !myWords[
                                                   myWords.length - index - 1]
@@ -220,10 +225,7 @@ class _MyVocaPageState extends State<MyVocaPage> {
                                     children: [
                                       SlidableAction(
                                         onPressed: (context) {
-                                          pref.remove(myWords[
-                                                  myWords.length - index - 1]
-                                              .word);
-                                          myWords.removeAt(
+                                          deleteWord(
                                               myWords.length - index - 1);
 
                                           setState(() {});

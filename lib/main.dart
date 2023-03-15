@@ -1,9 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:translator_app/app.dart';
+import 'package:translator_app/core/local_datasource.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await LocalDataSource.initialize();
+
   runApp(const MyApp());
 }
 
