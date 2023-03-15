@@ -19,6 +19,8 @@ class _MyVocaPageState extends State<MyVocaPage> {
   List<Word> myWords = [];
   List<bool> isKnwonWords = [];
   bool isReFresh = false;
+  bool isOnlyKnown = false;
+  bool isOnlyUnKnown = false;
   bool isWordFlip = false;
   LocalDataSource localDataSource = LocalDataSource();
   late TextEditingController controller1;
@@ -56,14 +58,12 @@ class _MyVocaPageState extends State<MyVocaPage> {
   }
 
   void deleteWord(int index) {
-    localDataSource.deleteVoca(myWords[myWords.length - index - 1]);
-    myWords.removeAt(myWords.length - index - 1);
+    localDataSource.deleteVoca(myWords[index]);
+    myWords.removeAt(index);
   }
 
   void updateWord(int index) {
-    localDataSource.updateKnownVoca(myWords[myWords.length - index - 1]);
-    myWords[myWords.length - index - 1].isKnown =
-        !myWords[myWords.length - index - 1].isKnown;
+    localDataSource.updateKnownVoca(myWords[index]);
   }
 
   void saveWord() async {
@@ -85,6 +85,9 @@ class _MyVocaPageState extends State<MyVocaPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('isOnlyKnwon: ${isOnlyKnown}');
+    print('isOnlyUnKnown: ${isOnlyUnKnown}');
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 60),
       child: !isReFresh
@@ -197,6 +200,21 @@ class _MyVocaPageState extends State<MyVocaPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: List.generate(myWords.length, (index) {
+                              if (isOnlyKnown) {
+                                if (myWords[myWords.length - 1 - index]
+                                        .isKnown ==
+                                    false) {
+                                  print('isOnlyKnown1');
+                                  return SizedBox();
+                                }
+                              } else if (isOnlyUnKnown) {
+                                if (myWords[myWords.length - 1 - index]
+                                        .isKnown ==
+                                    true) {
+                                  print('isOnlyUnKnown1');
+                                  return SizedBox();
+                                }
+                              }
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Slidable(
@@ -207,10 +225,7 @@ class _MyVocaPageState extends State<MyVocaPage> {
                                         onPressed: (context) {
                                           updateWord(
                                               myWords.length - index - 1);
-                                          myWords[myWords.length - index - 1]
-                                              .isKnown = !myWords[
-                                                  myWords.length - index - 1]
-                                              .isKnown;
+
                                           setState(() {});
                                         },
                                         backgroundColor: Colors.grey,
@@ -254,8 +269,53 @@ class _MyVocaPageState extends State<MyVocaPage> {
                     child: IconButton(
                   icon: Icon(Icons.flip),
                   onPressed: () {
-                    isWordFlip = !isWordFlip;
-                    setState(() {});
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(''),
+                        content: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  isOnlyKnown = false;
+                                  isOnlyUnKnown = false;
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('All')),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                                onPressed: () {
+                                  isOnlyUnKnown = true;
+                                  isOnlyKnown = false;
+
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('UnKown')),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                                onPressed: () {
+                                  isOnlyKnown = true;
+                                  isOnlyUnKnown = false;
+
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Known')),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                                onPressed: () {
+                                  isWordFlip = !isWordFlip;
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Flip'))
+                          ],
+                        ),
+                      ),
+                    );
                   },
                 )),
               ],

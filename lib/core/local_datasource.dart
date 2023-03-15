@@ -48,6 +48,5 @@ class LocalDataSource {
     final list = Hive.box<Word>(Word.boxKey);
     word.isKnown = !word.isKnown;
     list.put(word.word, word);
-    print('word: ${word}');
   }
 }
